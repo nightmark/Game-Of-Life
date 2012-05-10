@@ -156,8 +156,14 @@ for(var xAxis = 0; xAxis < nextState.length; xAxis++){
 	}
 } */
 function passTime(cube){		
-	var livingNeighbors = new Array();
-	for(cell in cube.state){
+	var livingNeighbors = [];
+	for (var i = 0; i < cube_size; i++){
+		livingNeighbors[i] = [];
+		for (var j = 0; j < cube_size; j++){
+			livingNeighbors[i][j] = [];
+		}
+	}
+	for(var i in cube.state){
 //		if(cell > 0){			
 //			if(cell.x > startX){
 //				if(cell.y > startY){
@@ -187,34 +193,34 @@ function passTime(cube){
 //				}
 //			}
 		
-			livingNeighbors[cell.x-1][cell.y-1][cell.z-1]++;
-			livingNeighbors[cell.x-1][cell.y-1][cell.z]++;
-			livingNeighbors[cell.x-1][cell.y-1][cell.z+1]++;
-			livingNeighbors[cell.x-1][cell.y][cell.z-1]++;
-			livingNeighbors[cell.x-1][cell.y][cell.z+1]++;
-			livingNeighbors[cell.x-1][cell.y][cell.z]++;
-			livingNeighbors[cell.x-1][cell.y+1][cell.z-1]++;
-			livingNeighbors[cell.x-1][cell.y+1][cell.z]++;
-			livingNeighbors[cell.x-1][cell.y+1][cell.z+1]++;			
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y-1][cube.state[i].z-1]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y-1][cube.state[i].z]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y-1][cube.state[i].z+1]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y][cube.state[i].z-1]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y][cube.state[i].z+1]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y][cube.state[i].z]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y+1][cube.state[i].z-1]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y+1][cube.state[i].z]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y+1][cube.state[i].z+1]++;			
 			
-			livingNeighbors[cell.x][cell.y-1][cell.z-1]++;
-			livingNeighbors[cell.x][cell.y][cell.z-1]++;		
-			livingNeighbors[cell.x][cell.y+1][cell.z-1]++;
-			livingNeighbors[cell.x][cell.y-1][cell.z]++;
-			livingNeighbors[cell.x][cell.y+1][cell.z]++;
-			livingNeighbors[cell.x][cell.y-1][cell.z+1]++;
-			livingNeighbors[cell.x][cell.y+1][cell.z+1]++;
-			livingNeighbors[cell.x][cell.y][cell.z+1]++;
+			livingNeighbors[cube.state[i].x][cube.state[i].y-1][cube.state[i].z-1]++;
+			livingNeighbors[cube.state[i].x][cube.state[i].y][cube.state[i].z-1]++;		
+			livingNeighbors[cube.state[i].x][cube.state[i].y+1][cube.state[i].z-1]++;
+			livingNeighbors[cube.state[i].x][cube.state[i].y-1][cube.state[i].z]++;
+			livingNeighbors[cube.state[i].x][cube.state[i].y+1][cube.state[i].z]++;
+			livingNeighbors[cube.state[i].x][cube.state[i].y-1][cube.state[i].z+1]++;
+			livingNeighbors[cube.state[i].x][cube.state[i].y+1][cube.state[i].z+1]++;
+			livingNeighbors[cube.state[i].x][cube.state[i].y][cube.state[i].z+1]++;
 						
-			livingNeighbors[cell.x+1][cell.y-1][cell.z-1]++;		
-			livingNeighbors[cell.x+1][cell.y][cell.z-1]++;
-			livingNeighbors[cell.x+1][cell.y+1][cell.z-1]++;					
-			livingNeighbors[cell.x+1][cell.y-1][cell.z]++;		
-			livingNeighbors[cell.x+1][cell.y][cell.z]++;		
-			livingNeighbors[cell.x+1][cell.y+1][cell.z]++;						
-			livingNeighbors[cell.x+1][cell.y-1][cell.z+1]++;		
-			livingNeighbors[cell.x+1][cell.y][cell.z+1]++;						
-			livingNeighbors[cell.x+1][cell.y+1][cell.z+1]++;
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y-1][cube.state[i].z-1]++;		
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y][cube.state[i].z-1]++;
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y+1][cube.state[i].z-1]++;					
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y-1][cube.state[i].z]++;		
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y][cube.state[i].z]++;		
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y+1][cube.state[i].z]++;						
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y-1][cube.state[i].z+1]++;		
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y][cube.state[i].z+1]++;						
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y+1][cube.state[i].z+1]++;
 		//}
 	}
 	
@@ -329,22 +335,29 @@ function sendState(cube){
 //      4 byte: hodnota bunky (x,y,z)
 	
 	//construct cube array
-	var cube_array = new Array(Math.pow(cube_size, 3))
+	console.log("send state id " + cube.id);
+	var cube_array = [];
+	for (var i = 0; i < cube_size; i++){
+		cube_array[i] = [];
+		for (var j = 0; j < cube_size; j++){
+			cube_array[i][j] = [];
+		}
+	}
 	for(var z = 0; z < cube_size; z++){
 		for(var y = 0; y < cube_size; y++){
 			for(var x = 0; x < cube_size; x++){
 				cube_array[x][y][z] = 0;
 			}
 		}
-	}
+	}	
 	for(var i = 0; i < cube.cells; i++){
 		cell = cube.state[i];
 		cube_array[cell.x][cell.y][cell.z] = 1;
 	}
 	
 	
-	var buff = new Buffer(17 + Math.pow(cube_size, 3));
-	buff.writeInt8(6, 0);
+	var buff = new Buffer(100+ 17 + Math.pow(cube_size, 3));
+	buff.writeInt8(7, 0);
 	buff.writeDoubleLE(cube.id, 1);
 	buff.writeDoubleLE(cube.generation, 9);
 	for(var z = 0; z < cube_size; z++){
@@ -353,38 +366,44 @@ function sendState(cube){
 				buff.writeInt32LE(cube_array[x][y][z], 17
 						+ z*cube_size*cube_size
 						+ y*cube_size
-						+ x)
+						+ x);
+				console.log("sent coords "+ x + " " + y + " " + z + " with " + buff.readInt32LE(17
+						+ z*cube_size*cube_size
+						+ y*cube_size
+						+ x));
 			}
 		}
 	}
 	
-	client.write(buff);
+	//client.write(buff);
 	if(visualizationEnabled){
 		client_visualisation.write(buff);
+		console.log('visualisation state sent');
 	}
 }
 
 function tick(){	
-	console.log('ticking');
-	for(cube in cubes){
-		sendState(cube);
+	console.log('ticking');	
+	for(var i in cubes){	
+		sendState(cubes[i]);		
 		var ready = true;
-		for(var neighbor in cube.neighbors){
-			if(neighbor.generation < cube.generation){
+		for(var j in cubes[i].neighbors){
+			if(cube.neighbors[j].generation < cubes[i].generation){
 				ready = false;
 			}
 		}
 		if(ready){
-			cube = passTime(cube);
+			cubes[i] = passTime(cubes[i]);
 		}
 	}
 }
 
 function initializeWorld(id){
-	var startRow = 5;
-	var startCol = 5;
-	var cube = new Cube(id);
-	cube.state.push(new Cell(startRow + 5,startCol + 2, 0));
+	var startRow = 25;
+	var startCol = 25;
+	var cube = new Cube(id);	
+	cubes.push(cube);	
+	/*cube.state.push(new Cell(startRow + 5,startCol + 2, 0));
 	cube.state.push(new Cell(startRow + 5,startCol + 3, 0));
 	cube.state.push(new Cell(startRow + 6,startCol + 2, 0));	
 	cube.state.push(new Cell(startRow + 6,startCol + 3, 0));
@@ -424,14 +443,23 @@ function initializeWorld(id){
 	cube.state.push(new Cell(startRow + 8,startCol + 17, 0));
 	cube.state.push(new Cell(startRow + 9,startCol + 15, 0));
 	cube.state.push(new Cell(startRow + 9,startCol + 15, 0));
+	*/
+	
+	cube.state.push(new Cell(startRow, startCol + 1, 31));
+	cube.state.push(new Cell(startRow + 1,startCol + 3, 31));
+	cube.state.push(new Cell(startRow + 2,startCol, 31));
+	cube.state.push(new Cell(startRow + 2,startCol + 1, 31));
+	cube.state.push(new Cell(startRow + 2,startCol + 2, 31));
+	
+	console.log(cube.id);
 	cube.generation = 1;
-	cube.cells = 36;
+	cube.cells = 5;
 	sendState(cube);
 }
 
 function Cube(id){
 	this.id = id;
-	this.state;
+	this.state = new Array();
 	this.cells;
 	this.generation;
 	this.neighbors = [];
@@ -452,12 +480,16 @@ var net = require('net');
 console.log('connecting to server');
 var client = net.connect(4172, 'localhost', function(){
 	console.log('Client connected');
-	setInterval(function(){tick();}, 2000);
+	setInterval(function(){tick();}, 60000);
 });
 
 console.log('connecting to visualisation');
 var client_visualisation = net.connect(1234, '147.251.208.129', function(){
 	console.log('Visualization client connected');	
+});
+client_visualisation.on('error', function(){
+	console.log('Visualisation crashed');
+	visualizationEnabled = false;
 });
 client_visualisation.on('error', function(){
 	console.log('Visualisation shutdown');
@@ -472,7 +504,8 @@ client.on('data', function(data){
 		//1 byte = 0 (ID packetu INFO)
 		//4 byte = K = velikost kostky (delka strany)
 		console.log("Received INFO packet with size" + data.readInt32LE(1));
-		cube_size = data.readInt32LE(1);		
+		cube_size = data.readInt32LE(1);
+		initializeWorld(5);
 		//handlePacketINFO(data);
 	}
 	if (data[0] == PROTOCOL.MANAGE_CUBE){
