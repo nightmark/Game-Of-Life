@@ -1,10 +1,10 @@
 var PROTOCOL = { INFO: 0
 				,MANAGE_CUBE: 1
 				,DONT_MANAGE_CUBE: 2
-				,ASK_CUBE_GENERATION: 3
+				,REQUEST_CUBE_GENERATION: 3
 				,RECEIVE_CUBE_GENERATION: 4
 				,REQUEST_CUBE: 5
-				,CUBE_DATA: 6
+				,RECEIVE_CUBE: 6
 				,UPDATED_STATE: 7
 };
 
@@ -157,11 +157,18 @@ for(var xAxis = 0; xAxis < nextState.length; xAxis++){
 } */
 function passTime(cube){		
 	var livingNeighbors = [];
-	for (var i = 0; i < cube_size; i++){
+	for (var i = -2; i < cube_size +2; i++){
 		livingNeighbors[i] = [];
-		for (var j = 0; j < cube_size; j++){
+		for (var j = -2; j < cube_size +2; j++){			
 			livingNeighbors[i][j] = [];
-		}
+			for (var k = -1; k < cube_size; k++){
+				livingNeighbors[i][j][k] = [];
+				for (var m = -1; m < cube_size; m++){
+					livingNeighbors[i][j][k][0] = 0;
+					livingNeighbors[i][j][k][1] = 0;
+				}
+			}
+		}		
 	}
 	for(var i in cube.state){
 //		if(cell > 0){			
@@ -192,35 +199,36 @@ function passTime(cube){
 //					}
 //				}
 //			}
-		
-			livingNeighbors[cube.state[i].x-1][cube.state[i].y-1][cube.state[i].z-1]++;
-			livingNeighbors[cube.state[i].x-1][cube.state[i].y-1][cube.state[i].z]++;
-			livingNeighbors[cube.state[i].x-1][cube.state[i].y-1][cube.state[i].z+1]++;
-			livingNeighbors[cube.state[i].x-1][cube.state[i].y][cube.state[i].z-1]++;
-			livingNeighbors[cube.state[i].x-1][cube.state[i].y][cube.state[i].z+1]++;
-			livingNeighbors[cube.state[i].x-1][cube.state[i].y][cube.state[i].z]++;
-			livingNeighbors[cube.state[i].x-1][cube.state[i].y+1][cube.state[i].z-1]++;
-			livingNeighbors[cube.state[i].x-1][cube.state[i].y+1][cube.state[i].z]++;
-			livingNeighbors[cube.state[i].x-1][cube.state[i].y+1][cube.state[i].z+1]++;			
+			livingNeighbors[cube.state[i].x][cube.state[i].y][cube.state[i].z][1] = 1;
 			
-			livingNeighbors[cube.state[i].x][cube.state[i].y-1][cube.state[i].z-1]++;
-			livingNeighbors[cube.state[i].x][cube.state[i].y][cube.state[i].z-1]++;		
-			livingNeighbors[cube.state[i].x][cube.state[i].y+1][cube.state[i].z-1]++;
-			livingNeighbors[cube.state[i].x][cube.state[i].y-1][cube.state[i].z]++;
-			livingNeighbors[cube.state[i].x][cube.state[i].y+1][cube.state[i].z]++;
-			livingNeighbors[cube.state[i].x][cube.state[i].y-1][cube.state[i].z+1]++;
-			livingNeighbors[cube.state[i].x][cube.state[i].y+1][cube.state[i].z+1]++;
-			livingNeighbors[cube.state[i].x][cube.state[i].y][cube.state[i].z+1]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y-1][cube.state[i].z-1][0]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y-1][cube.state[i].z][0]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y-1][cube.state[i].z+1][0]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y][cube.state[i].z-1][0]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y][cube.state[i].z+1][0]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y][cube.state[i].z][0]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y+1][cube.state[i].z-1][0]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y+1][cube.state[i].z][0]++;
+			livingNeighbors[cube.state[i].x-1][cube.state[i].y+1][cube.state[i].z+1][0]++;			
+			
+			livingNeighbors[cube.state[i].x][cube.state[i].y-1][cube.state[i].z-1][0]++;
+			livingNeighbors[cube.state[i].x][cube.state[i].y][cube.state[i].z-1][0]++;		
+			livingNeighbors[cube.state[i].x][cube.state[i].y+1][cube.state[i].z-1][0]++;
+			livingNeighbors[cube.state[i].x][cube.state[i].y-1][cube.state[i].z][0]++;
+			livingNeighbors[cube.state[i].x][cube.state[i].y+1][cube.state[i].z][0]++;
+			livingNeighbors[cube.state[i].x][cube.state[i].y-1][cube.state[i].z+1][0]++;
+			livingNeighbors[cube.state[i].x][cube.state[i].y+1][cube.state[i].z+1][0]++;
+			livingNeighbors[cube.state[i].x][cube.state[i].y][cube.state[i].z+1][0]++;
 						
-			livingNeighbors[cube.state[i].x+1][cube.state[i].y-1][cube.state[i].z-1]++;		
-			livingNeighbors[cube.state[i].x+1][cube.state[i].y][cube.state[i].z-1]++;
-			livingNeighbors[cube.state[i].x+1][cube.state[i].y+1][cube.state[i].z-1]++;					
-			livingNeighbors[cube.state[i].x+1][cube.state[i].y-1][cube.state[i].z]++;		
-			livingNeighbors[cube.state[i].x+1][cube.state[i].y][cube.state[i].z]++;		
-			livingNeighbors[cube.state[i].x+1][cube.state[i].y+1][cube.state[i].z]++;						
-			livingNeighbors[cube.state[i].x+1][cube.state[i].y-1][cube.state[i].z+1]++;		
-			livingNeighbors[cube.state[i].x+1][cube.state[i].y][cube.state[i].z+1]++;						
-			livingNeighbors[cube.state[i].x+1][cube.state[i].y+1][cube.state[i].z+1]++;
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y-1][cube.state[i].z-1][0]++;		
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y][cube.state[i].z-1][0]++;
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y+1][cube.state[i].z-1][0]++;					
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y-1][cube.state[i].z][0]++;		
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y][cube.state[i].z][0]++;		
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y+1][cube.state[i].z][0]++;						
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y-1][cube.state[i].z+1][0]++;		
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y][cube.state[i].z+1][0]++;						
+			livingNeighbors[cube.state[i].x+1][cube.state[i].y+1][cube.state[i].z+1][0]++;			
 		//}
 	}
 	
@@ -230,18 +238,27 @@ function passTime(cube){
 	for (var x = 0; x < cube_size; x++){
 		for (var y = 0; y < cube_size; y++){
 			for (var z = 0; z < cube_size; z++){
-				neighbors = livingNeighbors[x][y][z];
-				if(neighbors == 3 || neighbors == 4 || neighbors == 2){
-					var cell;
-					cell.x = x;
-					cell.y = y;
-					cell.z = z;
-					nextState.add(cell);
+				neighbors = livingNeighbors[x][y][z][0];
+				var alive = false;
+				var lived = livingNeighbors[x][y][z][1];
+				if (lived){
+					if(neighbors == 5 || neighbors == 6 || neighbors == 7){
+						alive = true;
+					}
+				}else{
+					if(neighbors == 6){
+						alive = true;
+					}									
+				}
+				if(alive){
+					var cell = new Cell(x,y,z);
+					nextState.push(cell);
 					cube.cells++;
 				}
 			}
 		}
 	}
+	cube.state = nextState;
 	cube.generation++;
 	return cube;
 	
@@ -281,129 +298,7 @@ function passTime(cube){
 
 /* GLIDER_GUN
 	//glider gun start
-	state[startRow + 5][startCol + 2]++;
-	state[startRow + 5][startCol + 3]++;
-	state[startRow + 6][startCol + 2]++;
-	state[startRow + 6][startCol + 3]++;
-	
-	state[startRow + 3][startCol + 36]++;
-	state[startRow + 3][startCol + 37]++;
-	state[startRow + 4][startCol + 36]++;
-	state[startRow + 4][startCol + 37]++;
-	
-	state[startRow + 1][startCol + 26]++;
-	state[startRow + 2][startCol + 26]++;
-	state[startRow + 2][startCol + 24]++;
-	state[startRow + 3][startCol + 23]++;
-	state[startRow + 4][startCol + 23]++;
-	state[startRow + 5][startCol + 23]++;
-	state[startRow + 3][startCol + 22]++;
-	state[startRow + 4][startCol + 22]++;
-	state[startRow + 5][startCol + 22]++;
-	state[startRow + 6][startCol + 24]++;
-	state[startRow + 6][startCol + 26]++;
-	state[startRow + 7][startCol + 26]++;	
-	
-	state[startRow + 3][startCol + 14]++;
-	state[startRow + 3][startCol + 15]++;
-	state[startRow + 4][startCol + 13]++;
-	state[startRow + 4][startCol + 17]++;
-	state[startRow + 5][startCol + 12]++;
-	state[startRow + 5][startCol + 18]++;
-	state[startRow + 6][startCol + 12]++;
-	state[startRow + 6][startCol + 16]++;
-	state[startRow + 6][startCol + 18]++;
-	state[startRow + 6][startCol + 19]++;
-	state[startRow + 7][startCol + 12]++;
-	state[startRow + 7][startCol + 18]++;
-	state[startRow + 8][startCol + 13]++;
-	state[startRow + 8][startCol + 17]++;
-	state[startRow + 9][startCol + 14]++;
-	state[startRow + 9][startCol + 15]++;	
-	//glider gun stop
-	*/
-
-function sendState(cube){
-//	packet UPRAVENA DATA (javascript -> erlang)
-//    - neobsahuje okraje - pouze upraveny vnitrek kostky
-//1 byte = 7 (ID packetu UPRAVENA DATA)
-//8 byte = ID kostky
-//8 byte = nova generace
-//pro kazde z od 0 do K-1:
-//  pro kazde y od 0 do K-1:
-//    pro kazde x od 0 do K-1:
-//      4 byte: hodnota bunky (x,y,z)
-	
-	//construct cube array
-	console.log("send state id " + cube.id);
-	var cube_array = [];
-	for (var i = 0; i < cube_size; i++){
-		cube_array[i] = [];
-		for (var j = 0; j < cube_size; j++){
-			cube_array[i][j] = [];
-		}
-	}
-	for(var z = 0; z < cube_size; z++){
-		for(var y = 0; y < cube_size; y++){
-			for(var x = 0; x < cube_size; x++){
-				cube_array[x][y][z] = 0;
-			}
-		}
-	}	
-	for(var i = 0; i < cube.cells; i++){
-		cell = cube.state[i];
-		cube_array[cell.x][cell.y][cell.z] = 1;
-	}
-	
-	
-	var buff = new Buffer(100+ 17 + Math.pow(cube_size, 3));
-	buff.writeInt8(7, 0);
-	buff.writeDoubleLE(cube.id, 1);
-	buff.writeDoubleLE(cube.generation, 9);
-	for(var z = 0; z < cube_size; z++){
-		for(var y = 0; y < cube_size; y++){
-			for(var x = 0; x < cube_size; x++){
-				buff.writeInt32LE(cube_array[x][y][z], 17
-						+ z*cube_size*cube_size
-						+ y*cube_size
-						+ x);
-				console.log("sent coords "+ x + " " + y + " " + z + " with " + buff.readInt32LE(17
-						+ z*cube_size*cube_size
-						+ y*cube_size
-						+ x));
-			}
-		}
-	}
-	
-	//client.write(buff);
-	if(visualizationEnabled){
-		client_visualisation.write(buff);
-		console.log('visualisation state sent');
-	}
-}
-
-function tick(){	
-	console.log('ticking');	
-	for(var i in cubes){	
-		sendState(cubes[i]);		
-		var ready = true;
-		for(var j in cubes[i].neighbors){
-			if(cube.neighbors[j].generation < cubes[i].generation){
-				ready = false;
-			}
-		}
-		if(ready){
-			cubes[i] = passTime(cubes[i]);
-		}
-	}
-}
-
-function initializeWorld(id){
-	var startRow = 25;
-	var startCol = 25;
-	var cube = new Cube(id);	
-	cubes.push(cube);	
-	/*cube.state.push(new Cell(startRow + 5,startCol + 2, 0));
+	cube.state.push(new Cell(startRow + 5,startCol + 2, 0));
 	cube.state.push(new Cell(startRow + 5,startCol + 3, 0));
 	cube.state.push(new Cell(startRow + 6,startCol + 2, 0));	
 	cube.state.push(new Cell(startRow + 6,startCol + 3, 0));
@@ -442,26 +337,174 @@ function initializeWorld(id){
 	cube.state.push(new Cell(startRow + 8,startCol + 13, 0));
 	cube.state.push(new Cell(startRow + 8,startCol + 17, 0));
 	cube.state.push(new Cell(startRow + 9,startCol + 15, 0));
-	cube.state.push(new Cell(startRow + 9,startCol + 15, 0));
+	cube.state.push(new Cell(startRow + 9,startCol + 15, 0));	
+	//glider gun stop
 	*/
+
+function sendState(cube){
+//	packet UPRAVENA DATA (javascript -> erlang)
+//    - neobsahuje okraje - pouze upraveny vnitrek kostky
+//1 byte = 7 (ID packetu UPRAVENA DATA)
+//8 byte = ID kostky
+//8 byte = nova generace
+//pro kazde z od 0 do K-1:
+//  pro kazde y od 0 do K-1:
+//    pro kazde x od 0 do K-1:
+//      4 byte: hodnota bunky (x,y,z)
 	
-	cube.state.push(new Cell(startRow, startCol + 1, 31));
-	cube.state.push(new Cell(startRow + 1,startCol + 3, 31));
-	cube.state.push(new Cell(startRow + 2,startCol, 31));
-	cube.state.push(new Cell(startRow + 2,startCol + 1, 31));
-	cube.state.push(new Cell(startRow + 2,startCol + 2, 31));
+	//construct cube array
+	
+	console.log("sent state id " + cube.id);
+	var cube_array = [];
+	for (var i = 0; i < cube_size; i++){
+		cube_array[i] = [];
+		for (var j = 0; j < cube_size; j++){
+			cube_array[i][j] = [];
+		}
+	}
+	for(var z = 0; z < cube_size; z++){
+		for(var y = 0; y < cube_size; y++){
+			for(var x = 0; x < cube_size; x++){
+				cube_array[x][y][z] = 0;
+			}
+		}
+	}	
+	for(var i = 0; i < cube.cells; i++){		
+		var cell = cube.state[i];
+		cube_array[cell.x][cell.y][cell.z] = 1;
+	}
+	
+	
+	var buff = new Buffer(17 + Math.pow(cube_size, 3)*4);
+	buff.writeInt8(7, 0);
+	buff.writeDoubleLE(cube.id, 1);
+	console.log("sending cube generation " + cube.generation);
+	buff.writeDoubleLE(cube.generation, 9);
+	for(var z = 0; z < cube_size; z++){
+		for(var y = 0; y < cube_size; y++){
+			for(var x = 0; x < cube_size; x++){				
+				buff.writeInt32LE(cube_array[x][y][z], 17
+						+ z*cube_size*cube_size*4
+						+ y*cube_size*4
+						+ x*4);
+			}
+		}
+	}
+	
+	client.write(buff);
+	if(visualizationEnabled){
+		client_visualisation.write(buff);
+		console.log('visualisation state sent');
+	}
+}
+
+function sendManage(id){
+//	packet SPRAVUJ (erlang -> javascript)
+//    - posle se automaticky po odeslani packetu INFO pro vsechny kostky 
+//      a take pri pridani nejake kostky na uzel
+//	1 byte = 1 (ID packetu spravuj)
+//	8 byte = ID kostky
+//	1 byte = pocet sousednich kostek (tech, co nejsou mimo mapu)
+//	pro kazdou ze sousednich kostek:
+//	  8 byte = ID sousedni kostky
+	if(visualizationEnabled){
+	var buff = new Buffer(10);
+	buff.writeInt8(1, 0);
+	buff.writeDoubleLE(id, 1);
+	buff.writeInt8(0, 9);
+	
+	client_visualisation.write(buff);	
+	console.log('visualisation manage sent with id ' + id);
+	}
+}
+
+function tick(){	
+	console.log('Managing');
+//	if(!initialized){
+//		console.log("initializing");
+//		initializeWorld(1);
+//		initialized = true;
+//	}
+	//sendState(cubes[0]);
+	for(var i in cubes){
+		console.log("cube " + cubes[i].id);
+		var ready = true;
+		for(var j in cubes[i].neighbors){
+			if(cubes[i].neighbors[j].generation < cubes[i].generation 
+					|| cubes[i].neighbors[j].generation == -1
+					|| cubes[i].generation == -1
+					|| !cubes[i].loaded){
+				ready = false;				
+			}
+		}
+		if(ready){
+			console.log("ready is true for " + cubes[i].id);
+			cubes[i] = passTime(cubes[i]);
+			sendState(cubes[i]);
+		}else{
+			console.log("ready is false for" + cubes[i].id);
+		}
+	}
+}
+
+function askCubeData(id, generation){
+//packet CHCI KOSTKU (javascript -> erlang)
+//1 byte = 5 (ID packetu CHCI KOSTKU)
+//8 byte = ID kostky
+//8 byte = pozadovana generace
+	console.log("Asking cube data for " + id + " generation " + generation);
+	var buff = new Buffer(17);
+	buff.writeInt8(5, 0);
+	buff.writeDoubleLE(id, 1);
+	buff.writeDoubleLE(generation, 9);	
+	client.write(buff);
+}
+
+function askCubeGeneration(id){
+//	packet CHCI GENERACI (javascript -> erlang)
+//    - pokud javascript nezna generaci (po pridani kostky) 
+//      nebo pokud se javascriptu zda, ze uz dlouho neprisel 
+//      packet GENERACE (vlivem chyby serveru)
+//		1 byte = 3 (ID packetu CHCI GENERACI)
+//		8 byte = ID kostky
+		console.log("Asking cube generation for " + id);
+		var buff = new Buffer(9);
+		buff.writeInt8(3, 0);
+		buff.writeDoubleLE(id, 1);	
+		client.write(buff);
+	}
+	
+function initializeWorld(id){
+	var startx = 3;
+	var starty = 3;
+	var startz = 3;
+	var cube = new Cube(id);	
+	cubes.push(cube);
+	
+	cube.state.push(new Cell(startx, starty, startz));
+	cube.state.push(new Cell(startx + 1,starty, startz));
+	cube.state.push(new Cell(startx + 2,starty , startz));
+	cube.state.push(new Cell(startx + 2,starty + 1, startz));
+	cube.state.push(new Cell(startx + 1,starty + 2, startz));
+	
+	cube.state.push(new Cell(startx, starty, startz + 1));
+	cube.state.push(new Cell(startx + 1,starty, startz + 1));
+	cube.state.push(new Cell(startx + 2,starty , startz + 1));
+	cube.state.push(new Cell(startx + 2,starty + 1, startz + 1));
+	cube.state.push(new Cell(startx + 1,starty + 2, startz + 1));
 	
 	console.log(cube.id);
 	cube.generation = 1;
-	cube.cells = 5;
-	sendState(cube);
+	cube.cells = cube.state.length;
+	sendManage(cube.id);
+	sendState(cube);	
 }
 
 function Cube(id){
 	this.id = id;
 	this.state = new Array();
 	this.cells;
-	this.generation;
+	this.generation = -1;
 	this.neighbors = [];
 	this.loaded = false;
 }
@@ -475,12 +518,15 @@ function Cell(x,y,z){
 var initialized = false;
 var visualizationEnabled = true;
 var cubes = new Array();
-var cube_size = 0;
+var cube_size = 4;
+var receivedBytes = 0;
+var totalBytes = 0;
+var packet;
 var net = require('net');
 console.log('connecting to server');
 var client = net.connect(4172, 'localhost', function(){
 	console.log('Client connected');
-	setInterval(function(){tick();}, 60000);
+	setInterval(function(){tick();}, 15000);
 });
 
 console.log('connecting to visualisation');
@@ -497,16 +543,73 @@ client_visualisation.on('error', function(){
 });
 
 client.on('data', function(data){
-	console.log(data);
+	console.log("received packet " + data[0]);
+	console.log("receivedBytes " + receivedBytes);
+	console.log("totalBytes " + totalBytes);
+	determinePacketType(data);	
+	var remainingBytes = 0;
+	if(totalBytes > receivedBytes){
+		if((totalBytes-receivedBytes) > data.length){
+			data.copy(packet, receivedBytes, 0, data.length);
+		}else{
+			data.copy(packet, receivedBytes, 0, (totalBytes-receivedBytes));
+			remainingBytes = data.length - (totalBytes - receivedBytes);
+		}
+	}else{
+		data.copy(packet, receivedBytes, 0, totalB);
+		remainingBytes = data.length - (totalBytes - receivedBytes);
+	}
+	receivedBytes += data.length;
+	if(totalBytes <= receivedBytes){
+		totalBytes = 0;
+		receivedBytes = remainingBytes;		
+		handlePacket(packet);
+		if(remainingBytes != 0){
+			console.log(remainingBytes + " bytes remained");
+			packet = new Buffer(remainingBytes);
+			data.copy(packet, 0, receivedBytes, data.length);
+			determinePacketType(packet);
+			data.copy(packet, 0, receivedBytes, data.length);
+		}
+	}	
+});
+
+client.on('end', function(){
+	console.log('Client disconnected');
+});
+function determinePacketType(data){
+	if(totalBytes == 0){
+			switch(data[0]){	
+				case PROTOCOL.INFO:
+					totalBytes = 5;
+					break;
+				case PROTOCOL.MANAGE_CUBE:
+					totalBytes = 10 + 8*data[9];
+					break;
+				case PROTOCOL.DONT_MANAGE_CUBE:
+					totalBytes = 9;
+					break;
+				case PROTOCOL.RECEIVE_CUBE_GENERATION:
+					totalBytes = 17;
+					break;
+				case PROTOCOL.RECEIVE_CUBE:
+					totalBytes = 17 + Math.pow(cube_size+2, 4);
+					break;
+			}
+		packet = new Buffer(totalBytes);
+	}
+}
+
+function handlePacket(data){
 	if (data[0] == PROTOCOL.INFO){
 		//packet INFO (erlang -> javascript)
 		//- prvni packet poslany ze serveru automaticky po otevreni spojeni
 		//1 byte = 0 (ID packetu INFO)
 		//4 byte = K = velikost kostky (delka strany)
-		console.log("Received INFO packet with size" + data.readInt32LE(1));
-		cube_size = data.readInt32LE(1);
-		initializeWorld(5);
-		//handlePacketINFO(data);
+		console.log("Received INFO packet with size " + data.readInt32LE(1));
+		if(data.readInt32LE(1) != 0){
+			cube_size = data.readInt32LE(1);
+		}
 	}
 	if (data[0] == PROTOCOL.MANAGE_CUBE){
 //		packet SPRAVUJ (erlang -> javascript)
@@ -518,16 +621,17 @@ client.on('data', function(data){
 //		pro kazdou ze sousednich kostek:
 //		8 byte = ID sousedni kostky
 		console.log("Received MANAGE_CUBE packet");
-		var cube = new Cube(data.readDoubleLE(1));		
+		var cube = new Cube(data.readDoubleLE(1));
 		for(var i = 0; i < data.readInt8(9); i++){
-			cube.neighbors.add(data.readDoubleLE(10 + (8*i)));
+			cube.neighbors.push(data.readDoubleLE(10 + (8*i)));			
 		}
 		cubes.push(cube);
+		askCubeGeneration(cube.id);
 		if(!initialized){
+			console.log("initializing");
 			initializeWorld(data.readDoubleLE(1));
 			initialized = true;
 		}
-		
 	}
 	if (data[0] == PROTOCOL.DONT_MANAGE_CUBE){
 		console.log("Received DONT_MANAGE_CUBE packet");
@@ -553,14 +657,23 @@ client.on('data', function(data){
 //		1 byte = 4 (ID packetu GENERACE)
 //		8 byte = ID kostky
 //		8 byte = generace
+		console.log("generation " + data.readDoubleLE(9));
 		for(var i = 0; i < cubes.length; i++){
 			if(cubes[i].id == data.readDoubleLE(1)){
-				cubes[i].generation = data.readDoubleLE(9);				
+				cubes[i].generation = data.readDoubleLE(9);
+				if(cubes[i].loaded == false){
+					askCubeData(cubes[i].id, cubes[i].generation);
+				}
+			}
+			for(var j in cubes[i].neighbors){
+				if(cubes[i].neighbors[j].id == data.readDoubleLE(1)){
+					cubes[i].neighbors[j].generation = data.readDoubleLE(9);
+				}
 			}
 		}
 	}	
-	if (data[0] == PROTOCOL.CUBE_DATA){
-		console.log("Received CUBE_DATA packet");
+	if (data[0] == PROTOCOL.RECEIVE_CUBE){
+		console.log("Received RECEIVE_CUBE packet");
 //		packet DATA KOSTKY (erlang -> javascript)
 //		   - reakce na CHCI KOSTKU
 //		1 byte = 6 (ID packetu DATA KOSTKY)
@@ -570,19 +683,30 @@ client.on('data', function(data){
 //		  pro kazde y od -1 do K:
 //		    pro kazde x od -1 do K:
 //		      4 byte: hodnota bunky (x,y,z)  (mimo mapu je vzdy 0xFFFFFFFF)
+		console.log("buffer length" + data.length);
+		console.log("id " + data.readDoubleLE(1));
+		
 		var cube;
-		for(var i = 0; i < cubes.length; i++){
+		for(var i = 0; i < cubes.length; i++){			
 			if(cubes[i].id == data.readDoubleLE(1)){
 				cube = cubes[i];
 				cube.generation = data.readDoubleLE(9);				
-				for(var z = -1; z <= cube_size; z++){
-					for(var y = -1; y <= cube_size; y++){
-						for(var x = -1; x <= cube_size; x++){
+				for(var z = -1; z < cube_size+1; z++){
+					for(var y = -1; y < cube_size+1; y++){
+						for(var x = -1; x < cube_size+1; x++){
+							console.log("reading buffer position " + (17 
+									+ (z+1)*(cube_size+2)*(cube_size+2)*4 
+									+ (y+1)*(cube_size+2)*4 
+									+ (x+1)*4));
 							if(data.readInt16LE(17 
-									+ z*(cube_size+2)*(cube_size+2) 
-									+ y*(cube_size+2) 
-									+ x) != 0xFFFFFFFF){
-								cube.state.add(new Cell(x,y,z));
+									+ (z+1)*(cube_size+2)*(cube_size+2)*4 
+									+ (y+1)*(cube_size+2)*4 
+									+ (x+1)*4) != 0xFFFFFFFF && 
+								data.readInt16LE(17 
+									+ (z+1)*(cube_size+2)*(cube_size+2)*4 
+									+ (y+1)*(cube_size+2)*4 
+									+ (x+1)*4) != 0){
+								cube.state.push(new Cell(x,y,z));
 							}
 						}
 					}					
@@ -591,11 +715,6 @@ client.on('data', function(data){
 		}
 		cube.loaded = true;		
 	}
-});
-
-client.on('end', function(){
-	console.log('Client disconnected');
-});
-
+}
 
 
