@@ -78,90 +78,14 @@ pro kazde z od 0 do K-1:
       4 byte: hodnota bunky (x,y,z)
 */
 
-/*OLD_PASS_TIME
-var nextState = new Array(state.length);
-for (var xAxis = 0; xAxis < state.length; xAxis++){		
-	nextState[xAxis] = new Array(state[xAxis].length);
-	
-	for (var yAxis = 0; yAxis < nextState[xAxis].length; yAxis++){			
-		nextState[xAxis][yAxis] = new Array(state[xAxis][yAxis].length);
-		
-		for (var zAxis = 0; zAxis < nextState[xAxis][yAxis].length; zAxis++){
-			nextState[xAxis][yAxis][zAxis] = 0;
-		}			
-	}
-}
-for(var xAxis = 0; xAxis < state.length; xAxis++){
-	for(var yAxis = 0; yAxis < state[xAxis].length; yAxis++){
-		if(state[xAxis][yAxis] > 0){
-			if(xAxis >= 1){
-				if (yAxis >= 1){
-					nextState[xAxis-1][yAxis-1]++;
-					nextState[xAxis][yAxis-1]++;			
-				}
-				nextState[xAxis-1][yAxis]++;
-				if(nextState[xAxis-1].length > yAxis + 1){
-					nextState[xAxis-1][yAxis+1]++;
-				}
-			}else{
-				if(yAxis >= 1){
-					nextState[xAxis][yAxis-1]++;
-				}
-			}
-			if(nextState.length > xAxis + 1){
-				if(nextState[xAxis].length > yAxis + 1){					
-					nextState[xAxis+1][yAxis+1]++;						
-					nextState[xAxis][yAxis+1]++;	
-				}
-				nextState[xAxis+1][yAxis]++;
-				if(yAxis >= 1){
-					nextState[xAxis+1][yAxis-1]++;
-				}
-			}else{
-				if(nextState[xAxis].length > yAxis + 1){
-					nextState[xAxis][yAxis+1]++;
-				}
-			}
-		}
-	}
-	
-	 // nextState[row-1][col-1]++;
-	 // nextState[row][col-1]++;
-	 // nextState[row+1][col-1]++;
-	 // nextState[row-1][col]++;
-	 // nextState[row+1][col]++;
-	 // nextState[row-1][col+1]++;
-	 // nextState[row][col+1]++;
-	 // nextState[row+1][col+1]++;
-	 
-} */
 
-/* PRINT_DEBUG
-//printDebug(nextState);
-for(var xAxis = 0; xAxis < nextState.length; xAxis++){
-	for(var yAxis = 0; yAxis < nextState[xAxis].length; yAxis++){
-		if(state[xAxis][yAxis] > 0){
-			if(nextState[xAxis][yAxis] == 2 || nextState[xAxis][yAxis] == 3){
-				nextState[xAxis][yAxis] = 1;
-			}else{
-				nextState[xAxis][yAxis] = 0;
-			}
-		}else{
-			if(nextState[xAxis][yAxis] == 3){
-				nextState[xAxis][yAxis] = 1;
-			}else{
-				nextState[xAxis][yAxis] = 0;
-			}
-		}
-	}
-} */
 function passTime(cube){		
 	var livingNeighbors = [];
 	for (var i = -2; i < cube_size +2; i++){
 		livingNeighbors[i] = [];
 		for (var j = -2; j < cube_size +2; j++){			
 			livingNeighbors[i][j] = [];
-			for (var k = -1; k < cube_size; k++){
+			for (var k = -2; k < cube_size +2; k++){
 				livingNeighbors[i][j][k] = [];
 				for (var m = -1; m < cube_size; m++){
 					livingNeighbors[i][j][k][0] = 0;
@@ -171,36 +95,6 @@ function passTime(cube){
 		}		
 	}
 	for(var i in cube.state){
-//		if(cell > 0){			
-//			if(cell.x > startX){
-//				if(cell.y > startY){
-//					if(cell.z > startZ){
-//						livingNeighbors[cell.x-1][cell.y-1][cell.z-1]++;
-//					}					
-//					livingNeighbors[cell.x-1][cell.y-1][cell.z]++;
-//					if(cell.z < cube_size){
-//						livingNeighbors[cell.x-1][cell.y-1][cell.z+1]++;
-//					}
-//				}
-//				if(cell.z > startZ){
-//					livingNeighbors[cell.x-1][cell.y][cell.z-1]++;
-//				}
-//				if(cell.z < cube_size){
-//					livingNeighbors[cell.x-1][cell.y][cell.z+1]++;
-//				}
-//					livingNeighbors[cell.x-1][cell.y][cell.z]++;
-//				if(cell.y < cube_size){
-//					if(cell.z > startZ){
-//						livingNeighbors[cell.x-1][cell.y+1][cell.z-1]++;
-//					}
-//					livingNeighbors[cell.x-1][cell.y+1][cell.z]++;
-//					if(cell.z < cube_size){
-//						livingNeighbors[cell.x-1][cell.y+1][cell.z+1]++;
-//					}
-//				}
-//			}
-			livingNeighbors[cube.state[i].x][cube.state[i].y][cube.state[i].z][1] = 1;
-			
 			livingNeighbors[cube.state[i].x-1][cube.state[i].y-1][cube.state[i].z-1][0]++;
 			livingNeighbors[cube.state[i].x-1][cube.state[i].y-1][cube.state[i].z][0]++;
 			livingNeighbors[cube.state[i].x-1][cube.state[i].y-1][cube.state[i].z+1][0]++;
@@ -229,7 +123,6 @@ function passTime(cube){
 			livingNeighbors[cube.state[i].x+1][cube.state[i].y-1][cube.state[i].z+1][0]++;		
 			livingNeighbors[cube.state[i].x+1][cube.state[i].y][cube.state[i].z+1][0]++;						
 			livingNeighbors[cube.state[i].x+1][cube.state[i].y+1][cube.state[i].z+1][0]++;			
-		//}
 	}
 	
 	var nextState = new Array();
@@ -261,85 +154,7 @@ function passTime(cube){
 	cube.state = nextState;
 	cube.generation++;
 	return cube;
-	
-	
 }
-/* NEXT_STATES
- * nextState[x-1][y-1][z-1]++;
- * nextState[x][y-1][z-1]++;
- * nextState[x+1][y-1][z-1]++;
- * nextState[x-1][y][z-1]++;
- * nextState[x+1][y][z-1]++;
- * nextState[x][y][z-1]++;
- * nextState[x-1][y+1][z-1]++;
- * nextState[x][y+1][z-1]++;
- * nextState[x+1][y+1][z-1]++;
-
- * nextState[x-1][y-1][z]++;
- * nextState[x][y-1][z]++;
- * nextState[x+1][y-1][z]++;
- * nextState[x-1][y][z]++;
- * nextState[x+1][y][z]++;
- * nextState[x-1][y+1][z]++;
- * nextState[x][y+1][z]++;
- * nextState[x+1][y+1][z]++;
-  
- * nextState[x-1][y-1][z+1]++;
- * nextState[x][y-1][z+1]++;
- * nextState[x+1][y-1][z+1]++;
- * nextState[x-1][y][z+1]++;
- * nextState[x+1][y][z+1]++;
- * nextState[x][y][z+1]++;
- * nextState[x-1][y+1][z+1]++;
- * nextState[x][y+1][z+1]++;
- * nextState[x+1][y+1][z+1]++;
-
- */
-
-/* GLIDER_GUN
-	//glider gun start
-	cube.state.push(new Cell(startRow + 5,startCol + 2, 0));
-	cube.state.push(new Cell(startRow + 5,startCol + 3, 0));
-	cube.state.push(new Cell(startRow + 6,startCol + 2, 0));	
-	cube.state.push(new Cell(startRow + 6,startCol + 3, 0));
-		
-	cube.state.push(new Cell(startRow + 3,startCol + 36, 0));
-	cube.state.push(new Cell(startRow + 3,startCol + 37, 0));
-	cube.state.push(new Cell(startRow + 4,startCol + 36, 0));
-	cube.state.push(new Cell(startRow + 4,startCol + 37, 0));	
-	
-	cube.state.push(new Cell(startRow + 1,startCol + 26, 0));
-	cube.state.push(new Cell(startRow + 2,startCol + 26, 0));
-	cube.state.push(new Cell(startRow + 2,startCol + 24, 0));
-	cube.state.push(new Cell(startRow + 3,startCol + 23, 0));
-	cube.state.push(new Cell(startRow + 4,startCol + 23, 0));
-	cube.state.push(new Cell(startRow + 5,startCol + 23, 0));
-	cube.state.push(new Cell(startRow + 3,startCol + 22, 0));
-	cube.state.push(new Cell(startRow + 4,startCol + 22, 0));
-	cube.state.push(new Cell(startRow + 5,startCol + 22, 0));
-	cube.state.push(new Cell(startRow + 6,startCol + 24, 0));
-	cube.state.push(new Cell(startRow + 6,startCol + 26, 0));
-	cube.state.push(new Cell(startRow + 7,startCol + 26, 0));
-		
-	
-	cube.state.push(new Cell(startRow + 3,startCol + 14, 0));	
-	cube.state.push(new Cell(startRow + 3,startCol + 15, 0));
-	cube.state.push(new Cell(startRow + 4,startCol + 13, 0));
-	cube.state.push(new Cell(startRow + 4,startCol + 17, 0));
-	cube.state.push(new Cell(startRow + 5,startCol + 12, 0));
-	cube.state.push(new Cell(startRow + 5,startCol + 18, 0));
-	cube.state.push(new Cell(startRow + 6,startCol + 12, 0));
-	cube.state.push(new Cell(startRow + 6,startCol + 16, 0));
-	cube.state.push(new Cell(startRow + 6,startCol + 18, 0));
-	cube.state.push(new Cell(startRow + 6,startCol + 19, 0));
-	cube.state.push(new Cell(startRow + 7,startCol + 12, 0));
-	cube.state.push(new Cell(startRow + 7,startCol + 18, 0));
-	cube.state.push(new Cell(startRow + 8,startCol + 13, 0));
-	cube.state.push(new Cell(startRow + 8,startCol + 17, 0));
-	cube.state.push(new Cell(startRow + 9,startCol + 15, 0));
-	cube.state.push(new Cell(startRow + 9,startCol + 15, 0));	
-	//glider gun stop
-	*/
 
 function sendState(cube){
 //	packet UPRAVENA DATA (javascript -> erlang)
@@ -377,9 +192,9 @@ function sendState(cube){
 	
 	var buff = new Buffer(17 + Math.pow(cube_size, 3)*4);
 	buff.writeInt8(7, 0);
-	buff.writeDoubleLE(cube.id, 1);
+	writeInt64LE(cube.id, buff, 1);
 	console.log("sending cube generation " + cube.generation);
-	buff.writeDoubleLE(cube.generation, 9);
+	writeInt64LE(cube.generation, buff, 9);
 	for(var z = 0; z < cube_size; z++){
 		for(var y = 0; y < cube_size; y++){
 			for(var x = 0; x < cube_size; x++){				
@@ -410,7 +225,7 @@ function sendManage(id){
 	if(visualizationEnabled){
 	var buff = new Buffer(10);
 	buff.writeInt8(1, 0);
-	buff.writeDoubleLE(id, 1);
+	writeInt64LE(id, buff, 1);
 	buff.writeInt8(0, 9);
 	
 	client_visualisation.write(buff);	
@@ -420,16 +235,11 @@ function sendManage(id){
 
 function tick(){	
 	console.log('Managing');
-//	if(!initialized){
-//		console.log("initializing");
-//		initializeWorld(1);
-//		initialized = true;
-//	}
-	//sendState(cubes[0]);
 	for(var i in cubes){
 		console.log("cube " + cubes[i].id);
 		var ready = true;
 		for(var j in cubes[i].neighbors){
+//			console.log("cube " + cubes[i].id + " has neighbors: " + cubes[i].neighbors);
 			if(cubes[i].neighbors[j].generation < cubes[i].generation 
 					|| cubes[i].neighbors[j].generation == -1
 					|| cubes[i].generation == -1
@@ -455,8 +265,8 @@ function askCubeData(id, generation){
 	console.log("Asking cube data for " + id + " generation " + generation);
 	var buff = new Buffer(17);
 	buff.writeInt8(5, 0);
-	buff.writeDoubleLE(id, 1);
-	buff.writeDoubleLE(generation, 9);	
+	writeInt64LE(id, buff, 1);
+	writeInt64LE(generation, buff, 9);	
 	client.write(buff);
 }
 
@@ -470,11 +280,11 @@ function askCubeGeneration(id){
 		console.log("Asking cube generation for " + id);
 		var buff = new Buffer(9);
 		buff.writeInt8(3, 0);
-		buff.writeDoubleLE(id, 1);	
+		writeInt64LE(id, buff, 1);	
 		client.write(buff);
 	}
 	
-function initializeWorld(id){
+function initializeWorld(id){	
 	var startx = 3;
 	var starty = 3;
 	var startz = 3;
@@ -507,6 +317,8 @@ function Cube(id){
 	this.generation = -1;
 	this.neighbors = [];
 	this.loaded = false;
+	this.askedGen = false;
+	this.askedData = false;
 }
 
 function Cell(x,y,z){
@@ -515,98 +327,103 @@ function Cell(x,y,z){
 	this.z = z;
 }
 
-var initialized = false;
+var initialize = false;
 var visualizationEnabled = true;
 var cubes = new Array();
 var cube_size = 4;
 var receivedBytes = 0;
 var totalBytes = 0;
-var packet;
+var processing = false;
+var dataBuffer;
 var net = require('net');
 console.log('connecting to server');
+//var client = net.connect(4172, '147.251.54.178', function(){
 var client = net.connect(4172, 'localhost', function(){
 	console.log('Client connected');
 	setInterval(function(){tick();}, 15000);
 });
 
-console.log('connecting to visualisation');
-var client_visualisation = net.connect(1234, '147.251.208.129', function(){
-	console.log('Visualization client connected');	
-});
-client_visualisation.on('error', function(){
-	console.log('Visualisation crashed');
-	visualizationEnabled = false;
-});
-client_visualisation.on('error', function(){
-	console.log('Visualisation shutdown');
-	visualizationEnabled = false;
-});
+if(visualizationEnabled){
+	console.log('connecting to visualisation');
+	var client_visualisation = net.connect(1234, '147.251.54.154', function(){
+		console.log('Visualization client connected');	
+	});
+	client_visualisation.on('error', function(){
+		console.log('Visualisation crashed');
+		visualizationEnabled = false;
+	});
+	client_visualisation.on('error', function(){
+		console.log('Visualisation shutdown');
+		visualizationEnabled = false;
+	});
+}
 
-client.on('data', function(data){
-	console.log("received packet " + data[0]);
-	console.log("receivedBytes " + receivedBytes);
-	console.log("totalBytes " + totalBytes);
-	determinePacketType(data);	
-	var remainingBytes = 0;
-	if(totalBytes > receivedBytes){
-		if((totalBytes-receivedBytes) > data.length){
-			data.copy(packet, receivedBytes, 0, data.length);
-		}else{
-			data.copy(packet, receivedBytes, 0, (totalBytes-receivedBytes));
-			remainingBytes = data.length - (totalBytes - receivedBytes);
-		}
-	}else{
-		data.copy(packet, receivedBytes, 0, totalB);
-		remainingBytes = data.length - (totalBytes - receivedBytes);
+client.on('data', function onData(data){
+	if(!(receivedBytes > 0)){
+		dataBuffer = new Buffer((data.length));	
 	}
-	receivedBytes += data.length;
-	if(totalBytes <= receivedBytes){
-		totalBytes = 0;
-		receivedBytes = remainingBytes;		
-		handlePacket(packet);
-		if(remainingBytes != 0){
-			console.log(remainingBytes + " bytes remained");
-			packet = new Buffer(remainingBytes);
-			data.copy(packet, 0, receivedBytes, data.length);
-			determinePacketType(packet);
-			data.copy(packet, 0, receivedBytes, data.length);
+	if(dataBuffer.length < (receivedBytes+data.length)){
+		var temp = new Buffer((data.length + receivedBytes));
+		dataBuffer.copy(temp, 0, 0, dataBuffer.length);
+		dataBuffer = temp;
+	}
+	data.copy(dataBuffer, receivedBytes, 0, data.length);
+	receivedBytes += data.length;	
+	if(totalBytes == 0){
+		if(dataBuffer.length >= 10){
+			totalBytes = determinePacketType(dataBuffer);
+		}else{
+			return;
 		}
-	}	
+	}
+	if(totalBytes <= receivedBytes){
+		var packet = new Buffer(totalBytes);
+		dataBuffer.copy(packet, 0, 0, totalBytes);
+		handlePacket(packet);
+		receivedBytes = receivedBytes - totalBytes;
+		totalBytes = 0;
+		if(receivedBytes > 0){
+			var remainingData = new Buffer(dataBuffer.length - packet.length);
+			dataBuffer.copy(remainingData, 0, packet.length, dataBuffer.length);
+			receivedBytes = 0;			
+			onData(remainingData);
+		}
+	}
 });
 
 client.on('end', function(){
 	console.log('Client disconnected');
 });
 function determinePacketType(data){
-	if(totalBytes == 0){
-			switch(data[0]){	
-				case PROTOCOL.INFO:
-					totalBytes = 5;
-					break;
-				case PROTOCOL.MANAGE_CUBE:
-					totalBytes = 10 + 8*data[9];
-					break;
-				case PROTOCOL.DONT_MANAGE_CUBE:
-					totalBytes = 9;
-					break;
-				case PROTOCOL.RECEIVE_CUBE_GENERATION:
-					totalBytes = 17;
-					break;
-				case PROTOCOL.RECEIVE_CUBE:
-					totalBytes = 17 + Math.pow(cube_size+2, 4);
-					break;
-			}
-		packet = new Buffer(totalBytes);
-	}
+		switch(data[0]){	
+			case PROTOCOL.INFO:
+				console.log("Received INFO packet");
+				return 5;
+			case PROTOCOL.MANAGE_CUBE:
+				console.log("Received MANAGE_CUBE packet");
+				return 10 + 8*data[9];
+			case PROTOCOL.DONT_MANAGE_CUBE:
+				console.log("Received DONT_MANAGE_CUBE packet");
+				return 9;
+			case PROTOCOL.RECEIVE_CUBE_GENERATION:
+				console.log("Received RECEIVE_CUBE_GENERATION packet");
+				return 17;
+			case PROTOCOL.RECEIVE_CUBE:
+				console.log("Received RECEIVE_CUBE packet");
+				return 17 + Math.pow(cube_size+2, 3)*4;
+		}
+		console.log("Unrecognized packet id " + data[0]);
+		return -1;
 }
 
 function handlePacket(data){
+	console.log("handling packet");
 	if (data[0] == PROTOCOL.INFO){
 		//packet INFO (erlang -> javascript)
 		//- prvni packet poslany ze serveru automaticky po otevreni spojeni
 		//1 byte = 0 (ID packetu INFO)
 		//4 byte = K = velikost kostky (delka strany)
-		console.log("Received INFO packet with size " + data.readInt32LE(1));
+		console.log("Processing INFO packet with size " + data.readInt32LE(1));
 		if(data.readInt32LE(1) != 0){
 			cube_size = data.readInt32LE(1);
 		}
@@ -620,28 +437,31 @@ function handlePacket(data){
 //		1 byte = pocet sousednich kostek (tech, co nejsou mimo mapu)
 //		pro kazdou ze sousednich kostek:
 //		8 byte = ID sousedni kostky
-		console.log("Received MANAGE_CUBE packet");
-		var cube = new Cube(data.readDoubleLE(1));
+		console.log("Processing MANAGE_CUBE packet");
+		var cube = new Cube(readInt64LE(data,1));
 		for(var i = 0; i < data.readInt8(9); i++){
 			cube.neighbors.push(data.readDoubleLE(10 + (8*i)));			
 		}
 		cubes.push(cube);
-		askCubeGeneration(cube.id);
-		if(!initialized){
+		if(!cube.askedGen){
+			askCubeGeneration(cube.id);
+			cube.askedGen = true;
+		}
+		if(!initialize){
 			console.log("initializing");
-			initializeWorld(data.readDoubleLE(1));
-			initialized = true;
+			initializeWorld(readInt64LE(data,1));
+			initialize = true;
 		}
 	}
 	if (data[0] == PROTOCOL.DONT_MANAGE_CUBE){
-		console.log("Received DONT_MANAGE_CUBE packet");
+		console.log("Processing DONT_MANAGE_CUBE packet");
 //		packet UZ NESPRAVUJ (erlang -> javascript)
 //	    - pokud se kostka presune na jiny uzel
 //		1 byte = 2 (ID packetu UZ NESPRAVUJ)
 //		8 byte = ID kostky
 		var index = -1;
 		for(var i = 0; i < cubes.length; i++){
-			if(cubes[i].id == data.readDoubleLE(1)){
+			if(cubes[i].id == readInt64LE(data,1)){
 				index = i;
 			}
 		}
@@ -650,30 +470,31 @@ function handlePacket(data){
 		}
 	}	
 	if (data[0] == PROTOCOL.RECEIVE_CUBE_GENERATION){
-		console.log("Received RECEIVE_CUBE_GENERATION packet");	
+		console.log("Processing RECEIVE_CUBE_GENERATION packet got " + readInt64LE(data,9));	
 //		packet GENERACE (erlang -> javascript)
 //	    - posila se automaticky pri zmene okolni kostky, 
 //	      ale i jako reakce na CHCI GENERACI
 //		1 byte = 4 (ID packetu GENERACE)
 //		8 byte = ID kostky
 //		8 byte = generace
-		console.log("generation " + data.readDoubleLE(9));
 		for(var i = 0; i < cubes.length; i++){
-			if(cubes[i].id == data.readDoubleLE(1)){
-				cubes[i].generation = data.readDoubleLE(9);
-				if(cubes[i].loaded == false){
+			if(cubes[i].id == readInt64LE(data,1)){
+				cubes[i].generation = readInt64LE(data,9);
+				cubes[i].askedGen = false;
+				if(cubes[i].loaded == false && !cubes[i].askedData){
 					askCubeData(cubes[i].id, cubes[i].generation);
+					cubes[i].askedData = true;
 				}
 			}
 			for(var j in cubes[i].neighbors){
-				if(cubes[i].neighbors[j].id == data.readDoubleLE(1)){
-					cubes[i].neighbors[j].generation = data.readDoubleLE(9);
+				if(cubes[i].neighbors[j].id == readInt64LE(data,1)){
+					cubes[i].neighbors[j].generation = readInt64LE(data,9);
 				}
 			}
 		}
 	}	
 	if (data[0] == PROTOCOL.RECEIVE_CUBE){
-		console.log("Received RECEIVE_CUBE packet");
+		console.log("Processing RECEIVE_CUBE packet for " + readInt64LE(data,1));
 //		packet DATA KOSTKY (erlang -> javascript)
 //		   - reakce na CHCI KOSTKU
 //		1 byte = 6 (ID packetu DATA KOSTKY)
@@ -683,21 +504,14 @@ function handlePacket(data){
 //		  pro kazde y od -1 do K:
 //		    pro kazde x od -1 do K:
 //		      4 byte: hodnota bunky (x,y,z)  (mimo mapu je vzdy 0xFFFFFFFF)
-		console.log("buffer length" + data.length);
-		console.log("id " + data.readDoubleLE(1));
-		
 		var cube;
 		for(var i = 0; i < cubes.length; i++){			
-			if(cubes[i].id == data.readDoubleLE(1)){
+			if(cubes[i].id == readInt64LE(data,1)){
 				cube = cubes[i];
-				cube.generation = data.readDoubleLE(9);				
+				cube.generation = readInt64LE(data,9);				
 				for(var z = -1; z < cube_size+1; z++){
 					for(var y = -1; y < cube_size+1; y++){
 						for(var x = -1; x < cube_size+1; x++){
-							console.log("reading buffer position " + (17 
-									+ (z+1)*(cube_size+2)*(cube_size+2)*4 
-									+ (y+1)*(cube_size+2)*4 
-									+ (x+1)*4));
 							if(data.readInt16LE(17 
 									+ (z+1)*(cube_size+2)*(cube_size+2)*4 
 									+ (y+1)*(cube_size+2)*4 
@@ -713,8 +527,23 @@ function handlePacket(data){
 				}
 			}
 		}
+		cube.askedData = false;
 		cube.loaded = true;		
 	}
+	if (data[0] > 6){
+		console.log("Unrecognized packet " + data[0]);
+	}
+}
+
+function readInt64LE(data, pos){
+	return (data.readInt32LE(pos +4 ) * Math.pow(2,32)) + data.readInt32LE(pos);
+}
+
+function writeInt64LE(value,data, pos){
+	var half1 = Math.floor(value/Math.pow(2,32));
+	var half2 = value - (half1*Math.pow(2,32));
+	data.writeInt32LE(half2, pos);
+	data.writeInt32LE(half1, pos+4);
 }
 
 
