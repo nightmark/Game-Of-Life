@@ -7,6 +7,25 @@ var PROTOCOL = { INFO: 0
 				,RECEIVE_CUBE: 6
 				,UPDATED_STATE: 7
 };
+//setting global variables
+var initialize = true;
+var visualizationEnabled = true;
+var rule = [5, 7, 6, 6];
+var cube_size = 4;
+var tickPeriod = 1500;
+var gameServerAddress = 'localhost';
+var visualizationAddress = '147.251.208.129';
+var visualizationPort = 1234;
+
+
+//computation variables
+var sentManage = false;
+var cubes = new Array();
+var receivedBytes = 0;
+var totalBytes = 0;
+var processing = false;
+var dataBuffer;
+
 
 /*PROTOCOL                                             
 vse je LITTLE endian
@@ -242,19 +261,32 @@ function tick(){
 		console.log("cube " + cubes[i].id);
 		var ready = true;
 		for(var j in cubes[i].neighbors){
-			if(cubes[i].neighbors[j].generation < cubes[i].generation 
-					|| cubes[i].neighbors[j].generation == -1
-					|| cubes[i].generation == -1
-					|| !cubes[i].loaded){
+			if(cubes[i].neighbors[j].generation < cubes[i].generation ){
+				askCubeGeneration(cubes[i].neighbors[j]);
+//				console.log("false for " + cubes[i].id + " because " + cubes[i].neighbors[j].id + " gen " + cubes[i].neighbors[j].generation + " < " + cubes[i].id + " gen " + cubes[i].generation);
 				ready = false;				
 			}
+			if(cubes[i].neighbors[j].generation == -1){
+//				console.log("false for " + cubes[i].id + " because " + cubes[i].neighbors[j].id + " == -1 ");
+				askCubeGeneration(cubes[i].neighbors[j]);
+				ready = false;
+			}
+			if(cubes[i].generation == -1){
+//				console.log("false for " + cubes[i].id + " because " + cubes[i].id + " gen  == -1");
+				askCubeGeneration(cubes[i]);
+				ready = false;				
+			}			
+			if(!cubes[i].loaded){
+//				console.log("false for " + cubes[i].id + " because it's not loaded");
+				ready = false;				
+			}						
 		}
 		if(ready){
 			console.log("ready is true for " + cubes[i].id);
 			cubes[i] = passTime(cubes[i]);			
 			sendState(cubes[i]);
 		}else{
-			console.log("ready is false for" + cubes[i].id);
+			//console.log("ready is false for" + cubes[i].id);
 		}
 	}
 }
@@ -272,18 +304,22 @@ function askCubeData(id, generation){
 	client.write(buff);
 }
 
-function askCubeGeneration(id){
+function askCubeGeneration(cube){
 //	packet CHCI GENERACI (javascript -> erlang)
 //    - pokud javascript nezna generaci (po pridani kostky) 
 //      nebo pokud se javascriptu zda, ze uz dlouho neprisel 
 //      packet GENERACE (vlivem chyby serveru)
 //		1 byte = 3 (ID packetu CHCI GENERACI)
 //		8 byte = ID kostky
-		console.log("Asking cube generation for " + id);
-		var buff = new Buffer(9);
-		buff.writeInt8(3, 0);
-		writeInt64LE(id, buff, 1);	
-		client.write(buff);
+		if(!cube.askedGen || genPending > 3){
+			console.log("Asking cube generation for " + cube.id);
+			var buff = new Buffer(9);
+			buff.writeInt8(3, 0);
+			writeInt64LE(cube.id, buff, 1);	
+			client.write(buff);
+		}else{
+			cube.genPending++;
+		}
 	}
 	
 function initializeWorld(cube){
@@ -291,7 +327,7 @@ function initializeWorld(cube){
 	var startx = 2;
 	var starty = 2;
 	var startz = 2;	
-	
+	//glider
 //	cube.state.push(new Cell(startx, starty, startz));
 //	cube.state.push(new Cell(startx + 1,starty, startz));
 //	cube.state.push(new Cell(startx + 2,starty , startz));
@@ -303,6 +339,8 @@ function initializeWorld(cube){
 //	cube.state.push(new Cell(startx + 2,starty , startz + 1));
 //	cube.state.push(new Cell(startx + 2,starty + 1, startz + 1));
 //	cube.state.push(new Cell(startx + 1,starty + 2, startz + 1));
+	
+	//oscillator field
 	var x;
 	var y;
 	var z;
@@ -326,6 +364,7 @@ function initializeWorld(cube){
 	cube.generation = 1;
 	cube.cells = cube.state.length;
 	cube.loaded = true;
+	cube.askedGen = true;
 	sendState(cube);
 }
 
@@ -338,6 +377,7 @@ function Cube(id){
 	this.loaded = false;
 	this.askedGen = false;
 	this.askedData = false;
+	this.genPending = 0;
 }
 
 function Cell(x,y,z){
@@ -346,26 +386,16 @@ function Cell(x,y,z){
 	this.z = z;
 }
 
-var initialize = true;
-var visualizationEnabled = true;
-var sentManage = false;
-var cubes = new Array();
-var cube_size = 4;
-var receivedBytes = 0;
-var totalBytes = 0;
-var processing = false;
-var dataBuffer;
-var rule = [5, 7, 6, 6];
 var net = require('net');
 
-var client = net.connect(4172, 'localhost', function(){
+var client = net.connect(4172, gameServerAddress, function(){
 	console.log('connected to server');
-	setInterval(function(){tick();}, 1);
+	setInterval(function(){tick();}, tickPeriod);
 });
 
 if(visualizationEnabled){
 	console.log('connecting to visualisation');
-	var client_visualisation = net.connect(1234, '147.251.208.129', function(){
+	var client_visualisation = net.connect(visualizationPort, visualizationAddress, function(){
 		console.log('Visualization client connected');	
 	});
 	client_visualisation.on('error', function(){
@@ -468,13 +498,10 @@ function handlePacket(data){
 				sentManage = true;
 			}
 			initializeWorld(cube);
-		}else{
-			if(!cube.askedGen){
-				askCubeGeneration(cube.id);
-				cube.askedGen = true;
-			}
-		}		
-	}
+		}else{			
+			askCubeGeneration(cube);			
+		}
+	}		
 	if (data[0] == PROTOCOL.DONT_MANAGE_CUBE){
 		console.log("Processing DONT_MANAGE_CUBE packet");
 //		packet UZ NESPRAVUJ (erlang -> javascript)
@@ -546,10 +573,10 @@ function handlePacket(data){
 									+ (y+1)*(cube_size+2)*4 
 									+ (x+1)*4) != 0){
 								cube.state.push(new Cell(x,y,z));
-//								console.log("live cell " + "[" + x + "][" + y + "][" + z + "] =" + data.readInt32LE(17 
-//										+ (z+1)*(cube_size+2)*(cube_size+2)*4 
-//										+ (y+1)*(cube_size+2)*4 
-//										+ (x+1)*4));
+								console.log("live cell " + "[" + x + "][" + y + "][" + z + "] =" + data.readInt32LE(17 
+										+ (z+1)*(cube_size+2)*(cube_size+2)*4 
+										+ (y+1)*(cube_size+2)*4 
+										+ (x+1)*4));
 							}
 						}
 					}					
