@@ -574,9 +574,9 @@ function handlePacket(data){
 									+ (x+1)*4) != 0){
 								cube.state.push(new Cell(x,y,z));
 //								console.log("live cell " + "[" + x + "][" + y + "][" + z + "] =" + data.readInt32LE(17 
-										+ (z+1)*(cube_size+2)*(cube_size+2)*4 
-										+ (y+1)*(cube_size+2)*4 
-										+ (x+1)*4));
+//										+ (z+1)*(cube_size+2)*(cube_size+2)*4 
+//										+ (y+1)*(cube_size+2)*4 
+//										+ (x+1)*4));
 							}
 						}
 					}					
