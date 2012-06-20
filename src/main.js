@@ -29,6 +29,7 @@ var processing = false;
 var dataBuffer;
 var tickInterval;
 var time;
+var iteration = 0;
 
 /*PROTOCOL                                             
 vse je LITTLE endian
