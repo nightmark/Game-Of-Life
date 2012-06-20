@@ -8,14 +8,16 @@ var PROTOCOL = { INFO: 0
 				,UPDATED_STATE: 7
 };
 //setting global variables
-var initialize = true;
+var initialize = false;
 var visualizationEnabled = false;
+var testingEnabled = true;
 var rule = [5, 7, 6, 6];
 var cube_size = 4;
-var tickPeriod = 10000;
+var tickPeriod = 1;
 var gameServerAddress = 'localhost';
 var visualizationAddress = 'localhost';
 var visualizationPort = 1234;
+
 
 
 //computation variables
@@ -25,7 +27,8 @@ var receivedBytes = 0;
 var totalBytes = 0;
 var processing = false;
 var dataBuffer;
-
+var tickInterval;
+var time;
 
 /*PROTOCOL                                             
 vse je LITTLE endian
@@ -255,7 +258,14 @@ function sendManage(id){
 	}
 }
 
-function tick(){	
+function tick(){
+	if (testingEnabled){
+		if(iteration == 0 ){
+			time = new Date.getTime();
+		}else{
+			iteration++;
+		}
+	}
 	console.log('Ticking');
 	for(var i in cubes){
 		console.log("cube " + cubes[i].id);
@@ -291,6 +301,11 @@ function tick(){
 		}else{
 			console.log("ready is false for" + cubes[i].id);
 		}
+	}
+	if(iteration == 100 && testingEnabled){
+		var newTime = new Date().getTime();
+		console.log("Game of Life ran for " + (newTime - time) + " miliseconds");
+		clearInterval(tickInterval);
 	}
 }
 
@@ -393,7 +408,7 @@ var net = require('net');
 
 var client = net.connect(4172, gameServerAddress, function(){
 	console.log('connected to server');
-	setInterval(function(){tick();}, tickPeriod);
+	tickInterval = setInterval(function(){tick();}, tickPeriod);
 });
 
 if(visualizationEnabled){
