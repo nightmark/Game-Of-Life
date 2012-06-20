@@ -262,7 +262,7 @@ function sendManage(id){
 function tick(){
 	if (testingEnabled){
 		if(iteration == 0 ){
-			time = new Date.getTime();
+			time = new Date().getTime();
 		}else{
 			iteration++;
 		}
