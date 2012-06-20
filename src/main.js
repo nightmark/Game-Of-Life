@@ -12,9 +12,9 @@ var initialize = true;
 var visualizationEnabled = true;
 var rule = [5, 7, 6, 6];
 var cube_size = 4;
-var tickPeriod = 1500;
+var tickPeriod = 5000;
 var gameServerAddress = 'localhost';
-var visualizationAddress = '147.251.208.129';
+var visualizationAddress = 'localhost';
 var visualizationPort = 1234;
 
 
@@ -573,7 +573,7 @@ function handlePacket(data){
 									+ (y+1)*(cube_size+2)*4 
 									+ (x+1)*4) != 0){
 								cube.state.push(new Cell(x,y,z));
-								console.log("live cell " + "[" + x + "][" + y + "][" + z + "] =" + data.readInt32LE(17 
+//								console.log("live cell " + "[" + x + "][" + y + "][" + z + "] =" + data.readInt32LE(17 
 										+ (z+1)*(cube_size+2)*(cube_size+2)*4 
 										+ (y+1)*(cube_size+2)*4 
 										+ (x+1)*4));
