@@ -11,12 +11,14 @@ var PROTOCOL = { INFO: 0
 var initialize = false;
 var visualizationEnabled = false;
 var testingEnabled = true;
+var loggingEnabled = true;
 var rule = [5, 7, 6, 6];
 var cube_size = 4;
 var tickPeriod = 1;
 var gameServerAddress = 'localhost';
 var visualizationAddress = 'localhost';
 var visualizationPort = 1234;
+var testTarget = 100;
 
 
 
@@ -29,7 +31,7 @@ var processing = false;
 var dataBuffer;
 var tickInterval;
 var time;
-var iteration = 0;
+var lowestGeneration = -1;
 
 /*PROTOCOL                                             
 vse je LITTLE endian
@@ -194,8 +196,9 @@ function sendState(cube){
 //      4 byte: hodnota bunky (x,y,z)
 	
 	//construct cube array
-	
-	console.log("sent state id " + cube.id);
+	if(loggingEnabled){
+		console.log("sent state id " + cube.id);
+	}
 	var cube_array = [];
 	for (var i = 0; i < cube_size; i++){
 		cube_array[i] = [];
@@ -219,7 +222,9 @@ function sendState(cube){
 	var buff = new Buffer(17 + Math.pow(cube_size, 3)*4);
 	buff.writeInt8(7, 0);
 	writeInt64LE(cube.id, buff, 1);
-	console.log("sending cube generation " + cube.generation);
+	if(loggingEnabled){
+		console.log("sending cube generation " + cube.generation);
+	}
 	writeInt64LE(cube.generation, buff, 9);
 	for(var z = 0; z < cube_size; z++){
 		for(var y = 0; y < cube_size; y++){
@@ -235,7 +240,9 @@ function sendState(cube){
 	client.write(buff);
 	if(visualizationEnabled){
 		client_visualisation.write(buff);
-		console.log('visualisation state sent');
+		if(loggingEnabled){
+			console.log('visualisation state sent');
+		}
 	}
 }
 
@@ -255,26 +262,39 @@ function sendManage(id){
 	buff.writeInt8(0, 9);
 	
 	client_visualisation.write(buff);	
-	console.log('visualisation manage sent with id ' + id);
+	if(loggingEnabled){
+		console.log('visualisation manage sent with id ' + id);
+	}
 	}
 }
 
 function tick(){
 	if (testingEnabled){
-		if(iteration == 0 ){
+		if(lowestGeneration == -1 ){
 			time = new Date().getTime();
-		}else{
-			iteration++;
+			console.log("Timer started doing " + testTarget + " generations");
 		}
 	}
-	console.log('Ticking');
-	for(var i in cubes){
-		console.log("cube " + cubes[i].id);
+	if(loggingEnabled){
+		console.log('Ticking');
+	}
+	if(cubes.length != 0){
+		lowestGeneration = cubes[0].generation;
+	}else {
+		lowestGeneration = 0;
+	}
+	for(var i in cubes){		
 		var ready = true;
-		console.log("cube " + cubes[i].id + " has neighbors with generations:");
-//		console.log(cubes[i].neighbors);
+		if(loggingEnabled){
+			console.log("cube " + cubes[i].id + " has neighbors with generations:");
+		}
+		if(lowestGeneration > cubes[i].generation){
+			lowestGeneration = cubes[i].generation;
+		}
 		for(var j in cubes[i].neighbors){
-			console.log(cubes[i].neighbors[j].id + " with gen " + cubes[i].neighbors[j].generation);
+			if(loggingEnabled){
+				console.log(cubes[i].neighbors[j].id + " with gen " + cubes[i].neighbors[j].generation);
+			}
 			if(cubes[i].neighbors[j].generation < cubes[i].generation ){
 				askCubeGeneration(cubes[i].neighbors[j]);
 //				console.log("false for " + cubes[i].id + " because " + cubes[i].neighbors[j].id + " gen " + cubes[i].neighbors[j].generation + " < " + cubes[i].id + " gen " + cubes[i].generation);
@@ -296,14 +316,18 @@ function tick(){
 			}						
 		}
 		if(ready){
-			console.log("ready is true for " + cubes[i].id);
+			if(loggingEnabled){
+				console.log("ready is true for " + cubes[i].id);
+			}
 			cubes[i] = passTime(cubes[i]);			
 			sendState(cubes[i]);
 		}else{
-			console.log("ready is false for" + cubes[i].id);
+			if(loggingEnabled){
+				console.log("ready is false for" + cubes[i].id);
+			}
 		}
 	}
-	if(iteration == 100 && testingEnabled){
+	if((lowestGeneration == testTarget) && testingEnabled){
 		var newTime = new Date().getTime();
 		console.log("Game of Life ran for " + (newTime - time) + " miliseconds");
 		clearInterval(tickInterval);
@@ -315,7 +339,9 @@ function askCubeData(id, generation){
 //1 byte = 5 (ID packetu CHCI KOSTKU)
 //8 byte = ID kostky
 //8 byte = pozadovana generace
-	console.log("Asking cube data for " + id + " generation " + generation);
+	if(loggingEnabled){
+		console.log("Asking cube data for " + id + " generation " + generation);
+	}
 	var buff = new Buffer(17);
 	buff.writeInt8(5, 0);
 	writeInt64LE(id, buff, 1);
@@ -331,7 +357,9 @@ function askCubeGeneration(cube){
 //		1 byte = 3 (ID packetu CHCI GENERACI)
 //		8 byte = ID kostky
 		if(!cube.askedGen || genPending > 3){
-			console.log("Asking cube generation for " + cube.id);
+			if(loggingEnabled){
+				console.log("Asking cube generation for " + cube.id);
+			}
 			var buff = new Buffer(9);
 			buff.writeInt8(3, 0);
 			writeInt64LE(cube.id, buff, 1);	
@@ -491,7 +519,9 @@ function handlePacket(data){
 		//- prvni packet poslany ze serveru automaticky po otevreni spojeni
 		//1 byte = 0 (ID packetu INFO)
 		//4 byte = K = velikost kostky (delka strany)
-		console.log("Processing INFO packet with size " + data.readInt32LE(1));
+		if(loggingEnabled){
+			console.log("Processing INFO packet with size " + data.readInt32LE(1));
+		}
 		if(data.readInt32LE(1) != 0){
 			cube_size = data.readInt32LE(1);
 		}
@@ -505,7 +535,9 @@ function handlePacket(data){
 //		1 byte = pocet sousednich kostek (tech, co nejsou mimo mapu)
 //		pro kazdou ze sousednich kostek:
 //		8 byte = ID sousedni kostky
-		console.log("Processing MANAGE_CUBE packet");
+		if(loggingEnabled){
+			console.log("Processing MANAGE_CUBE packet");
+		}
 		var cube = new Cube(readInt64LE(data,1));
 		for(var i = 0; i < data.readInt8(9); i++){
 			neighbor = new Cube(readInt64LE(data,10 + (8*i)));
@@ -524,7 +556,9 @@ function handlePacket(data){
 		}
 	}		
 	if (data[0] == PROTOCOL.DONT_MANAGE_CUBE){
-		console.log("Processing DONT_MANAGE_CUBE packet");
+		if(loggingEnabled){
+			console.log("Processing DONT_MANAGE_CUBE packet");
+		}
 //		packet UZ NESPRAVUJ (erlang -> javascript)
 //	    - pokud se kostka presune na jiny uzel
 //		1 byte = 2 (ID packetu UZ NESPRAVUJ)
@@ -540,7 +574,9 @@ function handlePacket(data){
 		}
 	}	
 	if (data[0] == PROTOCOL.RECEIVE_CUBE_GENERATION){
-		console.log("Processing RECEIVE_CUBE_GENERATION packet got " + readInt64LE(data,9) + " for " + readInt64LE(data,1));	
+		if(loggingEnabled){
+			console.log("Processing RECEIVE_CUBE_GENERATION packet got " + readInt64LE(data,9) + " for " + readInt64LE(data,1));
+		}
 //		packet GENERACE (erlang -> javascript)
 //	    - posila se automaticky pri zmene okolni kostky, 
 //	      ale i jako reakce na CHCI GENERACI
@@ -552,7 +588,9 @@ function handlePacket(data){
 				cubes[i].generation = readInt64LE(data,9);
 				cubes[i].askedGen = false;
 				if(cubes[i].loaded == false && !cubes[i].askedData){
-					console.log("asking cube " + cubes[i].id + " loaded is " + cubes[i].loaded);
+					if(loggingEnabled){
+						console.log("asking cube " + cubes[i].id + " loaded is " + cubes[i].loaded);
+					}
 					askCubeData(cubes[i].id, cubes[i].generation);
 					cubes[i].askedData = true;
 				}
@@ -565,7 +603,9 @@ function handlePacket(data){
 		}
 	}	
 	if (data[0] == PROTOCOL.RECEIVE_CUBE){
-		console.log("Processing RECEIVE_CUBE packet for " + readInt64LE(data,1));
+		if(loggingEnabled){
+			console.log("Processing RECEIVE_CUBE packet for " + readInt64LE(data,1));
+		}
 //		packet DATA KOSTKY (erlang -> javascript)
 //		   - reakce na CHCI KOSTKU
 //		1 byte = 6 (ID packetu DATA KOSTKY)
@@ -578,7 +618,9 @@ function handlePacket(data){
 		var cube;
 		for(var i = 0; i < cubes.length; i++){			
 			if(cubes[i].id == readInt64LE(data,1)){
-				console.log("hadling cube with id " + cubes[i].id);
+				if(loggingEnabled){
+					console.log("hadling cube with id " + cubes[i].id);
+				}
 				cube = cubes[i];
 				cube.state = new Array();
 				cube.generation = readInt64LE(data,9);				
