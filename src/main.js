@@ -9,10 +9,10 @@ var PROTOCOL = { INFO: 0
 };
 //setting global variables
 var initialize = true;
-var visualizationEnabled = true;
+var visualizationEnabled = false;
 var rule = [5, 7, 6, 6];
 var cube_size = 4;
-var tickPeriod = 5000;
+var tickPeriod = 10000;
 var gameServerAddress = 'localhost';
 var visualizationAddress = 'localhost';
 var visualizationPort = 1234;
@@ -260,7 +260,10 @@ function tick(){
 	for(var i in cubes){
 		console.log("cube " + cubes[i].id);
 		var ready = true;
+		console.log("cube " + cubes[i].id + " has neighbors with generations:");
+//		console.log(cubes[i].neighbors);
 		for(var j in cubes[i].neighbors){
+			console.log(cubes[i].neighbors[j].id + " with gen " + cubes[i].neighbors[j].generation);
 			if(cubes[i].neighbors[j].generation < cubes[i].generation ){
 				askCubeGeneration(cubes[i].neighbors[j]);
 //				console.log("false for " + cubes[i].id + " because " + cubes[i].neighbors[j].id + " gen " + cubes[i].neighbors[j].generation + " < " + cubes[i].id + " gen " + cubes[i].generation);
@@ -286,7 +289,7 @@ function tick(){
 			cubes[i] = passTime(cubes[i]);			
 			sendState(cubes[i]);
 		}else{
-			//console.log("ready is false for" + cubes[i].id);
+			console.log("ready is false for" + cubes[i].id);
 		}
 	}
 }
@@ -489,7 +492,9 @@ function handlePacket(data){
 		console.log("Processing MANAGE_CUBE packet");
 		var cube = new Cube(readInt64LE(data,1));
 		for(var i = 0; i < data.readInt8(9); i++){
-			cube.neighbors.push(data.readDoubleLE(10 + (8*i)));			
+			neighbor = new Cube(readInt64LE(data,10 + (8*i)));
+			cube.neighbors.push(neighbor);
+			askCubeGeneration(neighbor);
 		}
 		cubes.push(cube);		
 		if(initialize){
@@ -519,7 +524,7 @@ function handlePacket(data){
 		}
 	}	
 	if (data[0] == PROTOCOL.RECEIVE_CUBE_GENERATION){
-		console.log("Processing RECEIVE_CUBE_GENERATION packet got " + readInt64LE(data,9));	
+		console.log("Processing RECEIVE_CUBE_GENERATION packet got " + readInt64LE(data,9) + " for " + readInt64LE(data,1));	
 //		packet GENERACE (erlang -> javascript)
 //	    - posila se automaticky pri zmene okolni kostky, 
 //	      ale i jako reakce na CHCI GENERACI
