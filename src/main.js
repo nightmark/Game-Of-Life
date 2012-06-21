@@ -318,7 +318,9 @@ function tick(){
 			if(loggingEnabled){
 				console.log("ready is true for " + cubes[i].id);
 			}
-			cubes[i] = passTime(cubes[i]);			
+			
+			//cubes[i] = passTime(cubes[i]);
+			cubes[i].generation++;
 			sendState(cubes[i]);
 		}else{
 			if(loggingEnabled){
@@ -374,31 +376,6 @@ function initializeWorld(cube){
 	var starty = 1;
 	var startz = 1;
 	//glider
-	var x;
-	var y;
-	var z;
-	for (var i = 0; i < 6; i++){
-		for (var j = 0; j < 6; j++){
-			for (var k = 0; k < 6; k++){
-				x = i*5+startx;
-				y = j*5+starty;
-				z = k*5+startz;
-				cube.state.push(new Cell(x, y, z));
-				cube.state.push(new Cell(x + 1,y, z));
-				cube.state.push(new Cell(x + 2,y , z));
-				cube.state.push(new Cell(x + 2,y + 1, z));
-				cube.state.push(new Cell(x + 1,y + 2, z));
-				
-				cube.state.push(new Cell(x, y, z + 1));
-				cube.state.push(new Cell(x + 1,y, z + 1));
-				cube.state.push(new Cell(x + 2,y , z + 1));
-				cube.state.push(new Cell(x + 2,y + 1, z + 1));
-				cube.state.push(new Cell(x + 1,y + 2, z + 1));
-			}
-		}
-	}
-	
-	//oscillator field
 //	var x;
 //	var y;
 //	var z;
@@ -408,16 +385,41 @@ function initializeWorld(cube){
 //				x = i*5+startx;
 //				y = j*5+starty;
 //				z = k*5+startz;
-//				cube.state.push(new Cell(x + 1,y - 1, z));
+//				cube.state.push(new Cell(x, y, z));
 //				cube.state.push(new Cell(x + 1,y, z));
-//				cube.state.push(new Cell(x + 1,y + 1, z));
+//				cube.state.push(new Cell(x + 2,y , z));
+//				cube.state.push(new Cell(x + 2,y + 1, z));
+//				cube.state.push(new Cell(x + 1,y + 2, z));
 //				
-//				cube.state.push(new Cell(x + 1,y - 1, z+1));
-//				cube.state.push(new Cell(x + 1,y, z+1));
-//				cube.state.push(new Cell(x + 1,y + 1, z+1));
+//				cube.state.push(new Cell(x, y, z + 1));
+//				cube.state.push(new Cell(x + 1,y, z + 1));
+//				cube.state.push(new Cell(x + 2,y , z + 1));
+//				cube.state.push(new Cell(x + 2,y + 1, z + 1));
+//				cube.state.push(new Cell(x + 1,y + 2, z + 1));
 //			}
 //		}
-//	}	
+//	}
+	
+	//oscillator field
+	var x;
+	var y;
+	var z;
+	for (var i = 0; i < 6; i++){
+		for (var j = 0; j < 6; j++){
+			for (var k = 0; k < 6; k++){
+				x = i*5+startx;
+				y = j*5+starty;
+				z = k*5+startz;
+				cube.state.push(new Cell(x + 1,y - 1, z));
+				cube.state.push(new Cell(x + 1,y, z));
+				cube.state.push(new Cell(x + 1,y + 1, z));
+				
+				cube.state.push(new Cell(x + 1,y - 1, z+1));
+				cube.state.push(new Cell(x + 1,y, z+1));
+				cube.state.push(new Cell(x + 1,y + 1, z+1));
+			}
+		}
+	}	
 	
 	cube.generation = 1;
 	cube.cells = cube.state.length;
